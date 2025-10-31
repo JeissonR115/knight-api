@@ -1,6 +1,6 @@
 import "reflect-metadata";
 import { DataSource } from "typeorm";
-import { Pokemon } from "./models/Pokemon";
+import { Pokemon } from "./models/knight";
 import { Type } from "./models/Type";
 import { Ability } from "./models/Ability";
 import { Stat } from "./models/Stat";

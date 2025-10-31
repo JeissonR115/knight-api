@@ -5,7 +5,7 @@ import {
   ManyToMany,
   BaseEntity,
 } from "typeorm";
-import { Pokemon } from "./Pokemon";
+import { Pokemon } from "./knight";
 
 @Entity()
 export class Stat extends BaseEntity {

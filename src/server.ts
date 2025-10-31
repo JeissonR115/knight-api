@@ -1,22 +1,22 @@
-import "reflect-metadata";
+// server.ts
 import cors from "cors";
 import express from "express";
-import { AppDataSource } from "./config/db";
-import PokemonRoutes from "./routes/PokemonRoutes";
+import { connectDB } from "./config/db"; 
+import KnightRoutes from "./routes/knightRoutes";
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
-app.use("/api/pokemons", PokemonRoutes);
+app.use("/api/knights", KnightRoutes);
 
 const startServer = async () => {
   try {
-    console.log("Conectando a la base de datos...");
-    await AppDataSource.initialize();
+    console.log("Conectando a MongoDB Atlas...");
+    await connectDB();
 
-    console.log("Base de datos conectada correctamente");
+    console.log("✅ Conectado correctamente a MongoDB Atlas");
 
     app.listen(3001, () => {
       console.log("Servidor corriendo en http://localhost:3001");

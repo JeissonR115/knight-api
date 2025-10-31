@@ -1,18 +1,12 @@
-import { DataSource } from "typeorm";
-import { Pokemon } from "../models/Pokemon";
-import { Type } from "../models/Type";
-import { Ability } from "../models/Ability";
-import { Stat } from "../models/Stat";
+// db.ts
+import mongoose from "mongoose";
 
-export const AppDataSource = new DataSource({
-  type: "mysql",
-  host: "localhost",
-  port: 3306,
-  username: "root",
-  password: "",
-  database: "pokemon_db",
-  synchronize: false,
-  migrationsRun: false,
-  logging: ["error"],
-  entities: [__dirname + "/../models/*.{ts,js}"],
-});
+const MONGO_URI = "mongodb+srv://jeissonfeliper:jr115@knightscluster.plypbyv.mongodb.net/?appName=knightsCluster"
+export const connectDB = async () => {
+  try {
+    await mongoose.connect(MONGO_URI);
+    console.log("Conectado a MongoDB Atlas");
+  } catch (error) {
+    console.error("Error conectando a MongoDB", error);
+  }
+};
