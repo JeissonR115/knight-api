@@ -10,7 +10,7 @@ export const setupSwagger = (app: Express) => {
     const swaggerJsonPath = join(process.cwd(), 'docs', 'swagger.json');
     const swaggerDocument = JSON.parse(readFileSync(swaggerJsonPath, 'utf8'));
     
-    const serverUrl = `${HOST}:${PORT}`;
+    const serverUrl = NODE_ENV === 'development' ? `${HOST}:${PORT}`: `${HOST}`;
     
     swaggerDocument.servers = [
       {
