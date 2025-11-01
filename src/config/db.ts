@@ -1,21 +1,29 @@
-// db.ts
-import mongoose from "mongoose";
+// db.ts (o data-source.ts)
+import { DataSource } from "typeorm";
 import dotenv from "dotenv";
+import HxHCharacter  from "../models/HxHCharacter";
 
-dotenv.config(); 
-
-const MONGO_URI = process.env.MONGO_URI;
+dotenv.config();
+const { DATABASE_URL, DB_HOST, NODE_ENV} = process.env;
+export const AppDataSource = new DataSource({
+  type: "postgres",
+  url: DATABASE_URL,
+  entities: [HxHCharacter],
+  synchronize: false, 
+  logging: false,
+  ssl: NODE_ENV === "server" ? { rejectUnauthorized: false } : false,
+});
 
 export const connectDB = async (): Promise<void> => {
   try {
-    if (!MONGO_URI) {
-      throw new Error("No se encontró MONGO_URI en el archivo .env");
+    if (!DB_HOST && !DATABASE_URL) {
+      throw new Error("No se encontraron las variables de conexión a PostgreSQL en el archivo .env");
     }
 
-    await mongoose.connect(MONGO_URI);
-    console.log("Conectado a MongoDB Atlas");
+    await AppDataSource.initialize();
+    console.log("✅ Conectado a PostgreSQL");
   } catch (error) {
-    console.error("Error conectando a MongoDB:", error);
+    console.error("❌ Error conectando a PostgreSQL:", error);
     process.exit(1);
   }
 };

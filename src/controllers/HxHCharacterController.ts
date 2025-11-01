@@ -22,7 +22,7 @@ export class HxHCharacterController extends Controller {
 
   @Get("{id}")
   public async getCharacterById(@Path() id: string): Promise<HxHCharacterResponse> {
-    return await this.service.getById(id);
+    return await this.service.getById(Number(id));
   }
 
   @Post()
@@ -37,12 +37,12 @@ export class HxHCharacterController extends Controller {
     @Path() id: string,
     @Body() characterData: UpdateHxHCharacterDTO
   ): Promise<HxHCharacterResponse> {
-    return await this.service.update(id, characterData);
+    return await this.service.update(Number(id), characterData);
   }
 
   @Delete("{id}")
   public async deleteCharacter(@Path() id: string): Promise<{ message: string }> {
-    return await this.service.delete(id);
+    return await this.service.delete(Number(id));
   }
 
   @Get("stats/summary")
