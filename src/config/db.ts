@@ -9,8 +9,14 @@ export const AppDataSource = new DataSource({
   type: "postgres",
   url: DATABASE_URL,
   entities: [HxHCharacter],
-  synchronize: false, 
-  logging: false,
+  synchronize: true, 
+  logging: true, 
+
+  extra: {
+    ssl: {
+      rejectUnauthorized: false 
+    }
+  },
   ssl: NODE_ENV === "server" ? { rejectUnauthorized: false } : false,
 });
 
