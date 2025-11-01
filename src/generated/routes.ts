@@ -20,8 +20,6 @@ const models: TsoaRoute.Models = {
             "rank": {"dataType":"union","subSchemas":[{"dataType":"enum","enums":["Bronze"]},{"dataType":"enum","enums":["Silver"]},{"dataType":"enum","enums":["Gold"]}],"required":true},
             "power": {"dataType":"double","required":true},
             "img": {"dataType":"union","subSchemas":[{"dataType":"string"},{"dataType":"enum","enums":[null]}]},
-            "createdAt": {"dataType":"datetime"},
-            "updatedAt": {"dataType":"datetime"},
         },
         "additionalProperties": false,
     },

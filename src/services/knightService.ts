@@ -35,9 +35,7 @@ export class KnightService {
       armor: knight.armor,
       rank: knight.rank,
       power: knight.power,
-      img: knight.img,
-      createdAt: knight.createdAt,
-      updatedAt: knight.updatedAt
+      img: knight.img
     };
   }
 }
