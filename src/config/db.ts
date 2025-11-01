@@ -1,12 +1,21 @@
 // db.ts
 import mongoose from "mongoose";
+import dotenv from "dotenv";
 
-const MONGO_URI = "mongodb+srv://jeissonfeliper:jr115@knightscluster.plypbyv.mongodb.net/?appName=knightsCluster"
-export const connectDB = async () => {
+dotenv.config(); 
+
+const MONGO_URI = process.env.MONGO_URI;
+
+export const connectDB = async (): Promise<void> => {
   try {
+    if (!MONGO_URI) {
+      throw new Error("No se encontró MONGO_URI en el archivo .env");
+    }
+
     await mongoose.connect(MONGO_URI);
     console.log("Conectado a MongoDB Atlas");
   } catch (error) {
-    console.error("Error conectando a MongoDB", error);
+    console.error("Error conectando a MongoDB:", error);
+    process.exit(1);
   }
 };

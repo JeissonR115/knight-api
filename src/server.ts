@@ -1,25 +1,34 @@
 // server.ts
-import cors from "cors";
 import express from "express";
-import { connectDB } from "./config/db"; 
+import cors from "cors";
+import dotenv from "dotenv";
+import { connectDB } from "./config/db";
 import KnightRoutes from "./routes/knightRoutes";
+
+dotenv.config(); 
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+
 app.use("/api/knights", KnightRoutes);
 
-const startServer = async () => {
+const PORT = process.env.PORT || 3001;
+const NODE_ENV = process.env.NODE_ENV || "development";
+
+const startServer = async (): Promise<void> => {
   try {
-    console.log("Conectando a MongoDB Atlas...");
+    console.log(`Iniciando servidor en modo ${NODE_ENV}...`);
+    console.log("Conectando a la Base de Datos...");
+
     await connectDB();
 
-    console.log("✅ Conectado correctamente a MongoDB Atlas");
+    console.log("Conectado correctamente a la Base de Datos");
 
-    app.listen(3001, () => {
-      console.log("Servidor corriendo en http://localhost:3001");
+    app.listen(PORT, () => {
+      console.log(`Servidor corriendo en http://localhost:${PORT}`);
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);
