@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
-    "build": "tsc",
+    "dev": "tsoa spec-and-routes && ts-node-dev src/server.ts",
+    "build": "tsoa spec-and-routes && tsc",
+    "generate:docs": "tsoa spec-and-routes",
     "start": "node dist/server.js"
   },
   "keywords": [],
@@ -21,12 +22,17 @@
     "mongoose": "^8.19.2",
     "mysql2": "^3.15.1",
     "reflect-metadata": "^0.2.2",
+    "swagger-jsdoc": "^6.2.8",
+    "swagger-ui-express": "^5.0.1",
+    "tsoa": "^6.6.0",
     "typeorm": "^0.3.27"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.3",
     "@types/node": "^24.6.2",
+    "@types/swagger-jsdoc": "^6.0.4",
+    "@types/swagger-ui-express": "^4.1.8",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"
   }

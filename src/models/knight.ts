@@ -1,12 +1,8 @@
+import e from "express";
 import mongoose, { Schema, Document } from "mongoose";
+import { KnightResponse } from "../types/knight";
 
-export interface IKnight extends Document {
-  name: string;
-  armor: string;
-  rank: "Bronze" | "Silver" | "Gold";
-  power: number;
-  img?: string | null;
-}
+export interface IKnight extends Document, KnightResponse {}
 
 const knightSchema = new Schema<IKnight>({
   name: { type: String, required: true },

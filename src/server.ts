@@ -1,9 +1,9 @@
-// server.ts
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
-import KnightRoutes from "./routes/knightRoutes";
+import { setupSwagger } from "./config/swagger";
+import { RegisterRoutes } from "./generated/routes";
 
 dotenv.config(); 
 
@@ -12,11 +12,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+RegisterRoutes(app);
+setupSwagger(app);
 
-app.use("/api/knights", KnightRoutes);
-
-const PORT = process.env.PORT || 3001;
-const NODE_ENV = process.env.NODE_ENV || "development";
+const {PORT, NODE_ENV, HOST} = process.env;
 
 const startServer = async (): Promise<void> => {
   try {
@@ -28,7 +27,8 @@ const startServer = async (): Promise<void> => {
     console.log("Conectado correctamente a la Base de Datos");
 
     app.listen(PORT, () => {
-      console.log(`Servidor corriendo en http://localhost:${PORT}`);
+      console.log(`Servidor corriendo en ${HOST}:${PORT}`);
+      console.log(`Swagger Docs: ${HOST}:${PORT}/api-docs`);
     });
   } catch (error) {
     console.error("Error al iniciar la aplicación:", error);

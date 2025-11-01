@@ -1,27 +1,41 @@
-// controllers/knightController.ts
-import { Request, Response } from "express";
+import { Controller, Get, Query, Path, Route } from 'tsoa';
 import { KnightService } from "../services/knightService";
+import { KnightResponse } from "../types/knight";
 
-const service = new KnightService();
+@Route("api/knights")
+export class KnightController extends Controller {
+  private service = new KnightService();
 
-export const knightController = {
-  async getAll(req: Request, res: Response) {
-    const knights = await service.getAll();
-    res.json(knights);
-  },
+  @Get("/")
+  public async getAll(): Promise<KnightResponse[]> {
+    return await this.service.getAll();
+  }
 
-  async getById(req: Request, res: Response) {
-    const knight = await service.getById(req.params.id);
-    res.json(knight);
-  },
+  @Get("/search/name")
+  public async searchByName(@Query() name: string): Promise<KnightResponse[]> {
+    try {
+      if (!name) {
+        this.setStatus(400);
+        return [];
+      }
+      return await this.service.searchByName(name);
+    } catch (error: any) {
+      this.setStatus(400);
+      throw error;
+    }
+  }
 
-  async searchByName(req: Request, res: Response) {
-    const knights = await service.searchByName(req.query.name as string);
-    res.json(knights);
-  },
-
-  async search(req: Request, res: Response) {
-    const results = await service.search(req.query);
-    res.json(results);
-  },
-};
+  @Get("/search")
+  public async search(
+    @Query() name?: string,
+    @Query() armor?: string,
+    @Query() rank?: string
+  ): Promise<KnightResponse[]> {
+    try {
+      return await this.service.search({ name, armor, rank });
+    } catch (error: any) {
+      this.setStatus(400);
+      throw error;
+    }
+  }
+}

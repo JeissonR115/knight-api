@@ -1,0 +1,27 @@
+{
+  "entryFile": "src/server.ts",
+  "noImplicitAdditionalProperties": "throw-on-extras",
+  "controllerPathGlobs": ["src/controllers/*.ts"],
+  "spec": {
+    "outputDirectory": "docs",
+    "specVersion": 3,
+    "basePath": "/",
+    "spec": {
+      "info": {
+        "title": "Knight API",
+        "version": "1.0.0",
+        "description": "API para gestión de caballeros - Documentación automática con TypeScript"
+      },
+      "tags": [
+        {
+          "name": "Knights",
+          "description": "Operaciones relacionadas con knights"
+        }
+      ]
+    }
+  },
+  "routes": {
+    "routesDir": "src/generated",
+    "middleware": "express"
+  }
+}
