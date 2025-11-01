@@ -3,45 +3,30 @@ import { KnightResponse, KnightFilters } from "../types/knight";
 
 export class KnightService {
   async getAll(): Promise<KnightResponse[]> {
-    try {
-      const knights = await Knight.find();
-      return knights.map(knight => this.toKnightResponse(knight));
-    } catch (error) {
-      throw new Error("Error retrieving knights");
-    }
+    const knights = await Knight.find();
+    return knights.map(knight => this.toKnightResponse(knight));
   }
 
-
   async searchByName(name: string): Promise<KnightResponse[]> {
-    try {
-      if (!name || name.trim().length === 0) {
-        throw new Error("Debe proporcionar un nombre");
-      }
-      const knights = await Knight.find({
-        name: { $regex: new RegExp(name, "i") },
-      });
-      return knights.map(knight => this.toKnightResponse(knight));
-    } catch (error) {
-      throw error;
-    }
+    if (!name) throw new Error("Debe proporcionar un nombre");
+    const knights = await Knight.find({
+      name: { $regex: new RegExp(name, "i") },
+    });
+    return knights.map(knight => this.toKnightResponse(knight));
   }
 
   async search(filters: KnightFilters): Promise<KnightResponse[]> {
-    try {
-      const query: any = {};
+    const query: any = {};
 
-      if (filters.name && filters.name.trim().length > 0)
-        query.name = { $regex: new RegExp(filters.name, "i") };
-      if (filters.armor && filters.armor.trim().length > 0)
-        query.armor = { $regex: new RegExp(filters.armor, "i") };
-      if (filters.rank && filters.rank.trim().length > 0)
-        query.rank = filters.rank;
+    if (filters.name)
+      query.name = { $regex: new RegExp(filters.name, "i") };
+    if (filters.armor)
+      query.armor = { $regex: new RegExp(filters.armor, "i") };
+    if (filters.rank)
+      query.rank = filters.rank;
 
-      const knights = await Knight.find(query);
-      return knights.map(knight => this.toKnightResponse(knight));
-    } catch (error) {
-      throw new Error("Error during search");
-    }
+    const knights = await Knight.find(query);
+    return knights.map(knight => this.toKnightResponse(knight));
   }
 
   private toKnightResponse(knight: any): KnightResponse {

@@ -3,20 +3,19 @@ import { Express } from "express";
 import { readFileSync } from "fs";
 import { join } from "path";
 
-const { PORT, NODE_ENV, HOST } = process.env;
+const { PORT = '3001', NODE_ENV = 'development', HOST = 'localhost' } = process.env;
 
 export const setupSwagger = (app: Express) => {
   try {
-    // Lee el archivo swagger.json generado por tsoa
     const swaggerJsonPath = join(process.cwd(), 'docs', 'swagger.json');
     const swaggerDocument = JSON.parse(readFileSync(swaggerJsonPath, 'utf8'));
     
-    // Opcional: Actualiza dinámicamente los servers
     const serverUrl = `${HOST}:${PORT}`;
+    
     swaggerDocument.servers = [
       {
-        url:serverUrl,
-        description: `${NODE_ENV || 'development'} server`
+        url: serverUrl,
+        description: `${NODE_ENV} server`
       }
     ];
 
@@ -30,9 +29,9 @@ export const setupSwagger = (app: Express) => {
       }
     }));
 
-    console.log(`Swagger documentation available at ${HOST}:${PORT}/api-docs`);
+    console.log(`📚 Swagger documentation available at ${serverUrl}/api-docs`);
   } catch (error) {
-    console.error('Error loading Swagger documentation:', error);
-    console.log('Make sure to run: npm run generate:docs');
+    console.error('❌ Error loading Swagger documentation:', error);
+    console.log('💡 Make sure to run: npm run generate:docs');
   }
 };

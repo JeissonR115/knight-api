@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Path, Route } from 'tsoa';
+import { Controller, Get, Query, Route } from 'tsoa';
 import { KnightService } from "../services/knightService";
 import { KnightResponse } from "../types/knight";
 
