@@ -9,7 +9,7 @@ export const AppDataSource = new DataSource({
   type: "postgres",
   url: DATABASE_URL,
   entities: [HxHCharacter],
-  synchronize: true, 
+  synchronize: false, 
   logging: true, 
 
   extra: {

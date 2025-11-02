@@ -4,16 +4,19 @@ import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import { setupSwagger } from "./config/swagger";
 import { RegisterRoutes } from "./generated/routes";
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config(); 
 
-const app = express();
+export const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(errorHandler);
 
 RegisterRoutes(app);
 setupSwagger(app);
+
 
 const {PORT, NODE_ENV, HOST} = process.env;
 
@@ -36,4 +39,6 @@ const startServer = async (): Promise<void> => {
   }
 };
 
-startServer();
+if (process.env.NODE_ENV !== 'test') {
+  startServer();
+}

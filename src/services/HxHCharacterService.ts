@@ -7,6 +7,7 @@ import {
   UpdateHxHCharacterDTO 
 } from "../types/HxHCharacter";
 import { ILike, Between, Not } from "typeorm";
+import { AppError } from "../middleware/errorHandler"; 
 
 export class HxHCharacterService {
   private characterRepository = AppDataSource.getRepository(HxHCharacter);
@@ -17,7 +18,7 @@ export class HxHCharacterService {
     });
     
     if (existingCharacter) {
-      throw new Error(`Ya existe un personaje con el nombre: ${characterData.name}`);
+      throw new AppError(`Ya existe un personaje con el nombre: ${characterData.name}`, 400); // ← 400 en lugar de Error
     }
 
     const newCharacter = this.characterRepository.create(characterData);
@@ -31,7 +32,7 @@ export class HxHCharacterService {
     });
     
     if (!character) {
-      throw new Error(`Personaje con ID ${id} no encontrado`);
+      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
     }
     return this.toCharacterResponse(character);
   }
@@ -42,7 +43,7 @@ export class HxHCharacterService {
     });
     
     if (!character) {
-      throw new Error(`Personaje "${name}" no encontrado`);
+      throw new AppError(`Personaje "${name}" no encontrado`, 404); // ← 404 en lugar de Error
     }
     return this.toCharacterResponse(character);
   }
@@ -89,7 +90,7 @@ export class HxHCharacterService {
       });
       
       if (existingCharacter) {
-        throw new Error(`Ya existe otro personaje con el nombre: ${characterData.name}`);
+        throw new AppError(`Ya existe otro personaje con el nombre: ${characterData.name}`, 400); // ← 400 en lugar de Error
       }
     }
 
@@ -99,7 +100,7 @@ export class HxHCharacterService {
     });
 
     if (!updatedCharacter) {
-      throw new Error(`Personaje con ID ${id} no encontrado`);
+      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
     }
 
     return this.toCharacterResponse(updatedCharacter);
@@ -117,7 +118,7 @@ export class HxHCharacterService {
     });
     
     if (!character) {
-      throw new Error(`Personaje con ID ${id} no encontrado`);
+      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
     }
 
     await this.characterRepository.delete(id);
@@ -131,7 +132,7 @@ export class HxHCharacterService {
     });
     
     if (!character) {
-      throw new Error(`Personaje "${name}" no encontrado`);
+      throw new AppError(`Personaje "${name}" no encontrado`, 404); // ← 404 en lugar de Error
     }
 
     await this.characterRepository.delete(character.id);
