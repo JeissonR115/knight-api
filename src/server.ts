@@ -1,7 +1,6 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/db";
 import { setupSwagger } from "./config/swagger";
 import { RegisterRoutes } from "./generated/routes";
 import { errorHandler } from "./middleware/errorHandler";
@@ -23,11 +22,6 @@ const {PORT, NODE_ENV, HOST} = process.env;
 const startServer = async (): Promise<void> => {
   try {
     console.log(`Iniciando servidor en modo ${NODE_ENV}...`);
-    console.log("Conectando a la Base de Datos...");
-
-    await connectDB();
-
-    console.log("Conectado correctamente a la Base de Datos");
 
     app.listen(PORT, () => {
       console.log(`Servidor corriendo en ${HOST}:${PORT}`);

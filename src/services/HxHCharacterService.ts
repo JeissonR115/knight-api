@@ -1,153 +1,106 @@
-import { AppDataSource } from "../config/db";
-import HxHCharacter  from "../models/HxHCharacter";
 import { 
-  HxHCharacterResponse, 
-  HxHCharacterFilters, 
-  CreateHxHCharacterDTO, 
-  UpdateHxHCharacterDTO 
+  HxHCharacterResponse,
+  HxHCharacterFilters,
+  CreateHxHCharacterDTO,
+  UpdateHxHCharacterDTO
 } from "../types/HxHCharacter";
-import { ILike, Between, Not } from "typeorm";
-import { AppError } from "../middleware/errorHandler"; 
-
+import { AppError } from "../middleware/errorHandler";
+const URL_BASE = "/api/hxh-characters";
 export class HxHCharacterService {
-  private characterRepository = AppDataSource.getRepository(HxHCharacter);
-  
-  async create(characterData: CreateHxHCharacterDTO): Promise<HxHCharacterResponse> {
-    const existingCharacter = await this.characterRepository.findOne({
-      where: { name: characterData.name }
-    });
-    
-    if (existingCharacter) {
-      throw new AppError(`Ya existe un personaje con el nombre: ${characterData.name}`, 400); // ← 400 en lugar de Error
-    }
+  private MONGO_API: string;
+  private SQL_API: string;
 
-    const newCharacter = this.characterRepository.create(characterData);
-    const savedCharacter = await this.characterRepository.save(newCharacter);
-    return this.toCharacterResponse(savedCharacter);
+  constructor() {
+    this.MONGO_API = process.env.MONGO_API?.trim() ?? "";
+    this.SQL_API = process.env.SQL_API?.trim() ?? "";
+
+    if (!this.MONGO_API || !this.SQL_API) {
+      console.warn("⚠️ MONGO_API o SQL_API no están definidas en .env");
+    }
   }
 
-  async getById(id: number): Promise<HxHCharacterResponse> {
-    const character = await this.characterRepository.findOne({ 
-      where: { id } 
-    });
-    
-    if (!character) {
-      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
-    }
-    return this.toCharacterResponse(character);
-  }
-
-  async getByName(name: string): Promise<HxHCharacterResponse> {
-    const character = await this.characterRepository.findOne({ 
-      where: { name } 
-    });
-    
-    if (!character) {
-      throw new AppError(`Personaje "${name}" no encontrado`, 404); // ← 404 en lugar de Error
-    }
-    return this.toCharacterResponse(character);
-  }
-
-  // READ - Buscar personajes con filtros
-  async search(filters: HxHCharacterFilters = {}): Promise<HxHCharacterResponse[]> {
-    const where: any = {};
-
-    if (filters.name) {
-      where.name = ILike(`%${filters.name}%`);
-    }
-    
-    if (filters.age) {
-      where.age = filters.age;
-    }
-    
-    if (filters.minHeight || filters.maxHeight) {
-      where.height = Between(
-        filters.minHeight || 1,
-        filters.maxHeight || 999
-      );
-    }
-    
-    if (filters.minWeight || filters.maxWeight) {
-      where.weight = Between(
-        filters.minWeight || 1,
-        filters.maxWeight || 999
-      );
-    }
-
-    const characters = await this.characterRepository.find({ where });
-    return characters.map(character => this.toCharacterResponse(character));
-  }
-
-  // UPDATE - Actualizar personaje completo
-  async update(id: number, characterData: UpdateHxHCharacterDTO): Promise<HxHCharacterResponse> {
-    // Verificar si el nombre ya existe en otro personaje
-    if (characterData.name) {
-      const existingCharacter = await this.characterRepository.findOne({
-        where: { 
-          name: characterData.name, 
-          id: Not(id) 
-        }
-      });
+  /** 🔄 Fallback entre APIs remotas */
+  private async request<T>(path: string, options?: RequestInit): Promise<T> {
+    const endpoints = [
+      { name: "SQL API", url: this.SQL_API },
+      { name: "Mongo API", url: this.MONGO_API },
       
-      if (existingCharacter) {
-        throw new AppError(`Ya existe otro personaje con el nombre: ${characterData.name}`, 400); // ← 400 en lugar de Error
+    ];
+
+    let lastError: any = null;
+
+    for (const api of endpoints) {
+      try {
+        const url = api.url + path;
+        console.log(`➡️ Intentando ${api.name}: ${url}`);
+
+        const res = await fetch(url, options);
+
+        if (!res.ok) {
+          throw new Error(`Status: ${res.status}`);
+        }
+
+        return (await res.json()) as T;
+      } catch (error) {
+        console.error(`❌ Error en ${api.name}:`, error);
+        lastError = error;
       }
     }
 
-    await this.characterRepository.update(id, characterData);
-    const updatedCharacter = await this.characterRepository.findOne({ 
-      where: { id } 
+    throw new AppError("Ninguna API respondió correctamente", 503);
+  }
+
+
+  async search(filters: HxHCharacterFilters = {}): Promise<HxHCharacterResponse[]> {
+    const params = Object.entries(filters)
+      .filter(([, v]) => v !== undefined && v !== null)
+      .map(([k, v]) => [k, String(v)]) as [string, string][];
+
+    const query = new URLSearchParams(params).toString();
+
+    return this.request<HxHCharacterResponse[]>(`${URL_BASE}?${query}`);
+  }
+
+  async getById(id: number): Promise<HxHCharacterResponse> {
+    return this.request<HxHCharacterResponse>(`${URL_BASE}/${id}`);
+  }
+
+  async create(data: CreateHxHCharacterDTO): Promise<HxHCharacterResponse> {
+    return this.request<HxHCharacterResponse>(`${URL_BASE}`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
     });
-
-    if (!updatedCharacter) {
-      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
-    }
-
-    return this.toCharacterResponse(updatedCharacter);
+  }
+  async update(id: number, data: UpdateHxHCharacterDTO): Promise<HxHCharacterResponse> {
+    return this.request<HxHCharacterResponse>(`${URL_BASE}/${id}`, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
   }
 
-  // UPDATE - Actualización parcial
-  async partialUpdate(id: number, updates: Partial<UpdateHxHCharacterDTO>): Promise<HxHCharacterResponse> {
-    return this.update(id, updates);
+  async partialUpdate(id: number, data: Partial<UpdateHxHCharacterDTO>): Promise<HxHCharacterResponse> {
+    return this.update(id, data);
   }
 
-  // DELETE - Eliminar personaje
   async delete(id: number): Promise<{ message: string }> {
-    const character = await this.characterRepository.findOne({ 
-      where: { id } 
+    return this.request<{ message: string }>(`${URL_BASE}/${id}`, {
+      method: "DELETE"
     });
-    
-    if (!character) {
-      throw new AppError(`Personaje con ID ${id} no encontrado`, 404); // ← 404 en lugar de Error
-    }
-
-    await this.characterRepository.delete(id);
-    return { message: `Personaje "${character.name}" eliminado correctamente` };
   }
 
-  // DELETE - Eliminar por nombre
-  async deleteByName(name: string): Promise<{ message: string }> {
-    const character = await this.characterRepository.findOne({ 
-      where: { name } 
-    });
-    
-    if (!character) {
-      throw new AppError(`Personaje "${name}" no encontrado`, 404); // ← 404 en lugar de Error
-    }
-
-    await this.characterRepository.delete(character.id);
-    return { message: `Personaje "${name}" eliminado correctamente` };
-  }
-
-  // Método utilitario para formatear respuesta
-  private toCharacterResponse(character: HxHCharacter): HxHCharacterResponse {
-    return {
-      id: character.id.toString(),
-      name: character.name,
-      age: character.age,
-      height: character.height,
-      weight: character.weight,
-      img: character.img
-    };
+  async statsSummary(): Promise<{
+    total: number;
+    averageAge: number;
+    averageHeight: number;
+    averageWeight: number;
+  }> {
+    return this.request<{
+      total: number;
+      averageAge: number;
+      averageHeight: number;
+      averageWeight: number;
+    }>(`${URL_BASE}/stats/summary`);
   }
 }
