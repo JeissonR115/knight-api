@@ -20,6 +20,7 @@ export interface HxHCharacterFilters {
 export interface CreateHxHCharacterDTO {
   name: string;
   age: number;
+  email: string;
   height: number;
   weight: number;
   img: string;
