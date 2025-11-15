@@ -9,8 +9,14 @@ import { errorHandler } from "./middleware/errorHandler";
 dotenv.config(); 
 
 export const app = express();
-
-app.use(cors());
+const corsOptions = {
+  origin: [
+    'http://localhost:8081',
+    'http://127.0.0.1:8081'
+  ]
+};
+app.use(cors(corsOptions));
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(errorHandler);
 
