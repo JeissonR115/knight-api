@@ -13,7 +13,8 @@
     "test:coverage": "jest --coverage",
     "test:controllers": "jest tests/controllers",
     "test:services": "jest tests/services",
-    "test:models": "jest tests/models"
+    "test:models": "jest tests/models",
+    "sonar-scanner": "sonar-scanner -Dsonar.projectKey=hunterXhunter -Dsonar.sources=. -Dsonar.host.url=http://localhost:9000 -Dsonar.login=sqp_e6078ffe1a1c5aea3fb6a0fc5891904c1d04cabf"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +43,7 @@
     "@types/supertest": "^6.0.3",
     "@types/swagger-jsdoc": "^6.0.4",
     "@types/swagger-ui-express": "^4.1.8",
+    "cypress": "^15.6.0",
     "jest": "^30.2.0",
     "sonar-scanner": "^3.1.0",
     "supertest": "^7.1.4",
