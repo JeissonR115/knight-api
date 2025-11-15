@@ -13,6 +13,7 @@ export interface CreateUsrDTO {
   name: string;
   lastName: string;
   email: string;
+  lastClickAt?: Date | null;
 }
 
 // DTO para actualizar (PUT o PATCH)

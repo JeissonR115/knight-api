@@ -15,8 +15,7 @@ export class UsrService {
     }
 
     const newUsr = new Usr({
-      ...data,
-      lastClickAt: null
+      ...data
     });
 
     const saved = await newUsr.save();
