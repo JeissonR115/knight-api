@@ -207,25 +207,25 @@ export function RegisterRoutes(app: Router) {
             }
         });
         // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
-        const argsUsrController_searchByName: Record<string, TsoaRoute.ParameterSchema> = {
-                name: {"in":"query","name":"name","required":true,"dataType":"string"},
+        const argsUsrController_search: Record<string, TsoaRoute.ParameterSchema> = {
+                term: {"in":"query","name":"term","dataType":"string"},
         };
         app.get('/api/usrs',
             ...(fetchMiddlewares<RequestHandler>(UsrController)),
-            ...(fetchMiddlewares<RequestHandler>(UsrController.prototype.searchByName)),
+            ...(fetchMiddlewares<RequestHandler>(UsrController.prototype.search)),
 
-            async function UsrController_searchByName(request: ExRequest, response: ExResponse, next: any) {
+            async function UsrController_search(request: ExRequest, response: ExResponse, next: any) {
 
             // WARNING: This file was auto-generated with tsoa. Please do not modify it. Re-run tsoa to re-generate this file: https://github.com/lukeautry/tsoa
 
             let validatedArgs: any[] = [];
             try {
-                validatedArgs = templateService.getValidatedArgs({ args: argsUsrController_searchByName, request, response });
+                validatedArgs = templateService.getValidatedArgs({ args: argsUsrController_search, request, response });
 
                 const controller = new UsrController();
 
               await templateService.apiHandler({
-                methodName: 'searchByName',
+                methodName: 'search',
                 controller,
                 response,
                 next,

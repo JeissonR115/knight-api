@@ -1,19 +1,16 @@
-import { Controller, Get, Query, Route, Put, Post, Body } from 'tsoa';
+import { Controller, Get, Query, Route, Put, Post, Body, Tags } from 'tsoa';
 import { UsrService } from "../services/UsrService";
 import { CreateUsrDTO, UpdateUsrDTO, UsrResponse } from "../types/usr";
 
 @Route("api/usrs")
+@Tags("Usr")
 export class UsrController extends Controller {
   private service = new UsrService();
 
-  @Get("/")
-  public async searchByName(@Query() name: string): Promise<UsrResponse[]> {
+    @Get("/")
+  public async search(@Query() term?: string): Promise<UsrResponse[]> {
     try {
-      if (!name) {
-        this.setStatus(400);
-        return [];
-      }
-      return await this.service.searchByName(name);
+      return await this.service.search(term);
     } catch (error: any) {
       this.setStatus(400);
       throw error;

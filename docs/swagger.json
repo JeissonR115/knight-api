@@ -316,7 +316,7 @@
 		},
 		"/api/usrs": {
 			"get": {
-				"operationId": "SearchByName",
+				"operationId": "Search",
 				"responses": {
 					"200": {
 						"description": "Ok",
@@ -332,12 +332,15 @@
 						}
 					}
 				},
+				"tags": [
+					"Usr"
+				],
 				"security": [],
 				"parameters": [
 					{
 						"in": "query",
-						"name": "name",
-						"required": true,
+						"name": "term",
+						"required": false,
 						"schema": {
 							"type": "string"
 						}
@@ -358,6 +361,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Usr"
+				],
 				"security": [],
 				"parameters": [],
 				"requestBody": {
@@ -387,6 +393,9 @@
 						}
 					}
 				},
+				"tags": [
+					"Usr"
+				],
 				"security": [],
 				"parameters": [
 					{

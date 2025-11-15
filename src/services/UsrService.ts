@@ -24,13 +24,28 @@ export class UsrService {
   }
 
   // READ - Buscar por nombre
-  async searchByName(name: string): Promise<UsrResponse[]> {
+  async search(term?: string): Promise<UsrResponse[]> {
+    if (!term) {
+      // sin término → traer todos
+      const all = await Usr.find();
+      return all.map(u => this.toUsrResponse(u));
+    }
+  
+    // con término → buscar por name, lastName o email
+    const regex = new RegExp(term, "i");
+  
     const users = await Usr.find({
-      name: { $regex: new RegExp(name, "i") }
+      $or: [
+        { name: regex },
+        { lastName: regex },
+        { email: regex }
+      ]
     });
-
+  
     return users.map(u => this.toUsrResponse(u));
   }
+  
+
 
   // READ - Obtener por ID
   async getById(id: string): Promise<UsrResponse> {
