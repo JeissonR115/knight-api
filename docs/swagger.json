@@ -41,6 +41,76 @@
 				"type": "object",
 				"additionalProperties": false
 			},
+			"UsrResponse": {
+				"properties": {
+					"id": {
+						"type": "string"
+					},
+					"name": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"lastClickAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"required": [
+					"id",
+					"name",
+					"lastName",
+					"email",
+					"lastClickAt"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
+			"UpdateUsrDTO": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					},
+					"lastClickAt": {
+						"type": "string",
+						"format": "date-time",
+						"nullable": true
+					}
+				},
+				"type": "object",
+				"additionalProperties": false
+			},
+			"CreateUsrDTO": {
+				"properties": {
+					"name": {
+						"type": "string"
+					},
+					"lastName": {
+						"type": "string"
+					},
+					"email": {
+						"type": "string"
+					}
+				},
+				"required": [
+					"name",
+					"lastName",
+					"email"
+				],
+				"type": "object",
+				"additionalProperties": false
+			},
 			"HxHCharacterResponse": {
 				"properties": {
 					"id": {
@@ -85,6 +155,9 @@
 						"type": "number",
 						"format": "double"
 					},
+					"email": {
+						"type": "string"
+					},
 					"height": {
 						"type": "number",
 						"format": "double"
@@ -100,6 +173,7 @@
 				"required": [
 					"name",
 					"age",
+					"email",
 					"height",
 					"weight",
 					"img"
@@ -238,6 +312,102 @@
 						}
 					}
 				]
+			}
+		},
+		"/api/usrs": {
+			"get": {
+				"operationId": "SearchByName",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"items": {
+										"$ref": "#/components/schemas/UsrResponse"
+									},
+									"type": "array"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "query",
+						"name": "name",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				]
+			},
+			"post": {
+				"operationId": "CreateUsr",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UsrResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/CreateUsrDTO"
+							}
+						}
+					}
+				}
+			}
+		},
+		"/api/usrs/{id}": {
+			"put": {
+				"operationId": "UpdateUsr",
+				"responses": {
+					"200": {
+						"description": "Ok",
+						"content": {
+							"application/json": {
+								"schema": {
+									"$ref": "#/components/schemas/UsrResponse"
+								}
+							}
+						}
+					}
+				},
+				"security": [],
+				"parameters": [
+					{
+						"in": "path",
+						"name": "id",
+						"required": true,
+						"schema": {
+							"type": "string"
+						}
+					}
+				],
+				"requestBody": {
+					"required": true,
+					"content": {
+						"application/json": {
+							"schema": {
+								"$ref": "#/components/schemas/UpdateUsrDTO"
+							}
+						}
+					}
+				}
 			}
 		},
 		"/api/hxh-characters": {
